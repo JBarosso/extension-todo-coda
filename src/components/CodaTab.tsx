@@ -40,8 +40,8 @@ export default function CodaTab() {
     const [configMode, setConfigMode] = useState(false);
     const [inputUrl, setInputUrl] = useState('');
     // Remove showAll, rely on filterGroupValue === '' for showing all
-    const [filterGroupValue, setFilterGroupValue] = useState<string>('');
-    const [filterAssigneeValue, setFilterAssigneeValue] = useState<string>('');
+    const [filterGroupValue, setFilterGroupValue] = useState<string>(localStorage.getItem('coda_filter_group') || '');
+    const [filterAssigneeValue, setFilterAssigneeValue] = useState<string>(localStorage.getItem('coda_filter_assignee') || '');
 
     // Modal State
     const [editingRow, setEditingRow] = useState<any | null>(null);
@@ -271,28 +271,46 @@ export default function CodaTab() {
         setIsProgressInteger(hasIntegerValues);
     }, [rows, selectedProgressColId]);
 
-    // Auto-select Today's group on first load
+    // Auto-select Day Priority: Today > Saved > All
     useEffect(() => {
-        if (rows.length > 0 && selectedGroupColId && filterGroupValue === '') {
-            const today = new Date().toLocaleDateString('fr-FR', { weekday: 'long' });
-            const todayCapitalized = today.charAt(0).toUpperCase() + today.slice(1);
+        if (rows.length === 0 || !selectedGroupColId) return;
 
-            // Check if this group exists in our data
-            const hasTodayGroup = rows.some(r => {
-                const val = String(r.values[selectedGroupColId] || '').trim();
-                return val.toLowerCase() === todayCapitalized.toLowerCase();
-            });
+        const today = new Date().toLocaleDateString('fr-FR', { weekday: 'long' });
+        const todayCapitalized = today.charAt(0).toUpperCase() + today.slice(1);
 
-            if (hasTodayGroup) {
-                // But we need to match the exact case from the row if possible, or just Capitalized
-                // Let's Find the exact string value from the rows that matches today
-                const exactMatch = rows.find(r => String(r.values[selectedGroupColId] || '').trim().toLowerCase() === todayCapitalized.toLowerCase());
-                if (exactMatch) {
-                    setFilterGroupValue(String(exactMatch.values[selectedGroupColId]).trim());
-                }
+        // 1. Try Today (Highest Priority)
+        const todayMatch = rows.find(r => String(r.values[selectedGroupColId] || '').trim().toLowerCase() === todayCapitalized.toLowerCase());
+
+        if (todayMatch) {
+            const val = String(todayMatch.values[selectedGroupColId]).trim();
+            // If Today exists, we ALWAYS show it, overriding any saved state
+            if (filterGroupValue !== val) {
+                setFilterGroupValue(val);
+                // Note: We don't save this override to localStorage to preserve the user's manual fallback preference
+                // OR we do? The requirement says "keep in memory".
+                // If the user manually changes away from Today, it will be saved.
             }
+        } else {
+            // 2. Today not found. Logic: "si celui ci n'existe pas alors on affiche le jour en mémoire"
+            // We are already holding the 'saved' value in filterGroupValue (from init state).
+            // We just need to check if the current selection is valid in the new row set.
+            // If the saved day is NOT in the list, maybe we should clear it?
+            // Or keep it to show "empty"?
+            // Usually better to default to All if the specific filter is invalid, but persistence implies stickiness.
+            // Let's verify if the group still exists at all in the available groups.
+            
+            // Actually, if we just let it be, it acts as a filter that returns 0 results.
+            // That might be confusing. Let's check validity.
+            // But 'rows' might be partial? No, we get all rows.
+            
+            // If filterGroupValue is set (e.g. "Wednesday") but "Wednesday" is not in rows anymore...
+            // It displays nothing.
+            // Maybe safer to reset if invalid?
+            // But typically Kanban columns (Days) shouldn't disappear unless date changes.
+            // Let's strict to requirement: "affiche le jour en mémoire".
+            // So we leave it alone.
         }
-    }, [rows, selectedGroupColId]); // Be careful not to override user selection if they want 'All'
+    }, [rows, selectedGroupColId]); // Re-run when data refreshes
 
     // Filtering Logic
     useEffect(() => {
@@ -330,6 +348,8 @@ export default function CodaTab() {
         setApiToken('');
         localStorage.removeItem('coda_api_token');
         localStorage.removeItem('coda_config');
+        localStorage.removeItem('coda_filter_group');
+        localStorage.removeItem('coda_filter_assignee');
         setRows([]);
         setFilteredRows([]);
         setConfigMode(false);
@@ -341,6 +361,8 @@ export default function CodaTab() {
         stopAutoRefresh();
         setConfigMode(false);
         localStorage.removeItem('coda_config');
+        localStorage.removeItem('coda_filter_group');
+        localStorage.removeItem('coda_filter_assignee');
         setSelectedDocId(null);
         setSelectedTableId(null);
         setSelectedGroupColId(null);
@@ -590,7 +612,11 @@ export default function CodaTab() {
                                         {/* Group Filter */}
                                         <select
                                             value={filterGroupValue}
-                                            onChange={(e) => setFilterGroupValue(e.target.value)}
+                                            onChange={(e) => {
+                                                const val = e.target.value;
+                                                setFilterGroupValue(val);
+                                                localStorage.setItem('coda_filter_group', val);
+                                            }}
                                             className="w-full text-xs p-1.5 border rounded dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200 outline-none"
                                         >
                                             <option value="">All Days</option>
@@ -603,7 +629,11 @@ export default function CodaTab() {
                                         {selectedAssigneeColId && (
                                             <select
                                                 value={filterAssigneeValue}
-                                                onChange={(e) => setFilterAssigneeValue(e.target.value)}
+                                                onChange={(e) => {
+                                                    const val = e.target.value;
+                                                    setFilterAssigneeValue(val);
+                                                    localStorage.setItem('coda_filter_assignee', val);
+                                                }}
                                                 className="w-full text-xs p-1.5 border rounded dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200 outline-none"
                                             >
                                                 <option value="">All Assignees</option>
