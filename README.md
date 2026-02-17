@@ -30,21 +30,20 @@ Une console de gestion puissante pour le planning global et la recherche.
 
 ---
 
-## 🚀 Installation Rapide
+## 🚀 Installation & Build
 
-Pour installer l'une des deux extensions :
+### Commandes Unifiées (depuis la racine)
+Vous pouvez maintenant tout builder d'un coup sans changer de dossier :
+- **Tout builder** : `npm run build-all`
+- **Builder Coda** : `npm run build-coda`
+- **Builder Lovable** : `npm run build-lovable`
 
+### Méthode Manuelle
 1. Entrez dans le dossier souhaité :
    ```bash
    cd standalone-coda
    # OU
    cd standalone-lovable
-   ```
-
-2. Installez et buildez :
-   ```bash
-   npm install
-   npm run build
    ```
 
 3. Chargez dans Chrome :

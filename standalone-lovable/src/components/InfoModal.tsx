@@ -42,7 +42,7 @@ export default function InfoModal({ isOpen, onClose }: InfoModalProps) {
                 {/* Header */}
                 <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
                     <h2 className="text-base font-semibold text-gray-900 dark:text-gray-100">
-                        Configuration API
+                        Information Console Planning
                     </h2>
                     <button
                         onClick={onClose}
@@ -56,52 +56,29 @@ export default function InfoModal({ isOpen, onClose }: InfoModalProps) {
 
                 {/* Content */}
                 <div className="p-4 max-h-[60vh] overflow-y-auto space-y-6">
-                    {/* Coda Section */}
-                    <div>
-                        <div className="flex items-center gap-2 mb-3">
-                            <span className="text-xl">📄</span>
-                            <h3 className="font-semibold text-gray-900 dark:text-gray-100">Coda Todo</h3>
-                        </div>
-
-                        <div className="space-y-3 text-sm text-gray-600 dark:text-gray-400">
-                            <div>
-                                <h4 className="font-medium text-gray-800 dark:text-gray-200 mb-1">1. Filtres</h4>
-                                <p className="text-xs">
-                                    Utilisez le filtre <strong>Day</strong> (ou Group) pour sélectionner le jour (ex: "Lundi"). L'extension tente de sélectionner le jour actuel automatiquement.
-                                </p>
-                            </div>
-                            <div>
-                                <h4 className="font-medium text-gray-800 dark:text-gray-200 mb-1">2. Configuration</h4>
-                                <p className="text-xs">
-                                    Cliquez sur <strong>Config</strong> pour changer les colonnes mappées. Assurez-vous que les colonnes <strong>Comments</strong> et <strong>Progress</strong> sont bien sélectionnées pour que la synchro fonctionne.
-                                </p>
-                            </div>
-                            <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-100 dark:border-blue-800">
-                                <p className="text-[10px] text-blue-600 dark:text-blue-300">
-                                    Le rafraîchissement est automatique toutes les 5 minutes.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Lovable/Tasks Section */}
                     <div>
                         <div className="flex items-center gap-2 mb-3">
                             <span className="text-xl">⚡</span>
-                            <h3 className="font-semibold text-gray-900 dark:text-gray-100">Lovable Tasks</h3>
+                            <h3 className="font-semibold text-gray-900 dark:text-gray-100">Global Planning</h3>
                         </div>
 
                         <div className="space-y-3 text-sm text-gray-600 dark:text-gray-400">
                             <div>
-                                <h4 className="font-medium text-gray-800 dark:text-gray-200 mb-1">Connexion Supabase</h4>
+                                <h4 className="font-medium text-gray-800 dark:text-gray-200 mb-1">1. Recherche Globale</h4>
                                 <p className="text-xs">
-                                    Entrez l'URL de votre projet et la clé <code>anon</code>. L'extension scannera vos tables pour trouver celle des tâches.
+                                    Utilisez la barre de recherche en haut pour trouver instantanément une tâche ou un client sur <strong>toutes les périodes</strong>.
                                 </p>
                             </div>
                             <div>
-                                <h4 className="font-medium text-gray-800 dark:text-gray-200 mb-1">Row Level Security (RLS)</h4>
+                                <h4 className="font-medium text-gray-800 dark:text-gray-200 mb-1">2. Planning & Stats</h4>
                                 <p className="text-xs">
-                                    Pour que l'édition fonctionne, votre table Supabase doit avoir des politiques RLS permettant l'`UPDATE` pour le rôle <code>anon</code> (ou être publique).
+                                    Filtrez par mois ou semaine. Les statistiques affichent vos <strong>heures travaillées</strong> et le <strong>temps restant</strong> estimé.
+                                </p>
+                            </div>
+                            <div>
+                                <h4 className="font-medium text-gray-800 dark:text-gray-200 mb-1">3. Gestion Chrono</h4>
+                                <p className="text-xs">
+                                    Utilisez le bouton ⏱️ pour démarrer/arrêter l'enregistrement du temps. Les sessions sont synchronisées avec Supabase dès l'arrêt.
                                 </p>
                             </div>
                         </div>
@@ -116,7 +93,7 @@ export default function InfoModal({ isOpen, onClose }: InfoModalProps) {
                        bg-blue-500 hover:bg-blue-600 text-white
                        transition-colors"
                     >
-                        Compris !
+                        Excellent !
                     </button>
                 </div>
             </div>

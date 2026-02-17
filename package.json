@@ -6,6 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build-coda": "cd standalone-coda && npm.cmd run build",
+    "build-lovable": "cd standalone-lovable && npm.cmd run build",
+    "build-all": "npm.cmd run build-coda && npm.cmd run build-lovable",
     "lint": "eslint .",
     "preview": "vite preview"
   },
